@@ -1,0 +1,97 @@
+
+<script type="text/ng-template" id="list.html">
+    <ul dnd-list="list">
+        <li ng-repeat="item in list"
+            dnd-draggable="item"
+            dnd-effect-allowed="move"
+            dnd-moved="list.splice($index, 1)"
+            dnd-selected="models.selected = item"
+            ng-class="{selected: models.selected === item}"
+            ng-include="item.type + '.html'">
+        </li>
+    </ul>
+</script>
+
+<script type="text/ng-template" id="container.html">
+    <div class="container-element box box-blue">
+        <h3>Container {{item.id}}</h3>
+        <div class="column" ng-repeat="list in item.columns" ng-include="'list.html'"></div>
+        <div class="clearfix"></div>
+    </div>
+</script>
+<script type="text/ng-template" id="layout.html">
+    <div class="layout-element box box-blue">
+        <h3>layout {{item.id}}</h3>
+        <div class="column" ng-repeat="list in item.columns" ng-include="'list.html'"></div>
+        <div class="clearfix"></div>
+    </div>
+</script>
+<script>
+    // Turn off automatic editor creation first.
+    CKEDITOR.disableAutoInline = true;
+    CKEDITOR.inline( 'editor1' );
+</script>
+<script type="text/ng-template" id="text.html">    
+    <div id="{{item.id}}" inline-text-editor  class="inline-text-editor ng-valid ng-dirty ng-valid-parse ng-touched" ng-init="cke_id='cke-'+itme.type+'-'+item.id" ng-focus = "editorFocus(item)" ng-blur = "editorBlur(item)" draggable="false" contenteditable="true" tabindex="0" spellcheck="false" role="textbox" arial-label="Rich Text Editor, {{item.id}}" title="Rich Text Editor, {{item.id}}">
+        {{item.text}}
+    </div>    
+</script>
+
+<div ng-controller="View1Ctrl" class="container">
+    <div class="container-fluid">
+        <div class="container1 row">
+            <div class="settingPanel" ng-click="test()">
+                <div class="toolbox box box-grey box-padding">
+                    <h3>New Elements</h3>
+                    <ul class="droplist">
+                        <li ng-repeat="item in models.templates"
+                            dnd-draggable="item"
+                            dnd-effect-allowed="copy"
+                            dnd-copied="item.id = item.id + 1"
+                            >
+                            <div class="panelItem">
+                                {{item.type}}
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div ng-if="models.selected" class="box box-grey box-padding">
+                    <h3>Selected</h3>
+                    <strong>Type: </strong> {{models.selected.type}}<br>
+                    <input type="text" ng-model="models.selected.id" class="form-control"/>
+                </div> 
+                <div class="trashcan box box-grey box-padding">
+                    <h3>Trash</h3>
+                    <ul dnd-list="[]">
+                        <div class="trashcanRect">
+                            <span class="glyphicon glyphicon-trash"></span></p>
+                        </div>
+                    </ul>
+                </div>     
+            </div>
+            <div class="mainContent">
+                <div id="editor1" contenteditable="true">
+                    <h1>Inline Editing in Action!</h1>
+                    <p>The "div" element that contains this text is now editable.</p>
+                </div>
+                <div class="dropzoneRect col-md-10">
+                    <div class="row">
+                        <div ng-repeat="(zone, list) in models.dropzones" class="col-md-10">
+                            <div class="dropzone box box-yellow">
+                                <h3>Dropzone {{zone}}</h3>
+                                <div ng-include="'list.html'"></div>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </div>
+            <div class="modelContent">
+                <h2>Generated Model</h2>
+                <pre>{{modelAsJson}}</pre>
+            </div>
+        </div>        
+    </div>    
+</div>
+
+
